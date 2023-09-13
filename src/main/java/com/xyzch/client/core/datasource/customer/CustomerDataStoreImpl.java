@@ -32,4 +32,9 @@ public class CustomerDataStoreImpl implements CustomerDataStore {
     public Customer getCustomerByName(String name) {
         return boundedMapperCustomer.customerFromCustomerEntity(customerRepository.getCustomerByName(name));
     }
+
+    @Override
+    public List<Customer> getAllCustomerByNames(List<String> names) {
+        return boundedMapperCustomer.listCustomerFromCustomerEntity(customerRepository.getAllCustomerByNames(names));
+    }
 }

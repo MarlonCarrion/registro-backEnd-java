@@ -30,4 +30,9 @@ public class CustomerUCImpl implements CustomerUC {
         return customerDS.getCustomerByName(name);
     }
 
+    @Override
+    public List<Customer> getAllCustomerByNames(List<String> names) {
+        return customerDS.getAllCustomerByNames(names);
+    }
+
 }

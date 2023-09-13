@@ -1,6 +1,9 @@
 package com.xyzch.client.api.campaign;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xyzch.client.core.campaign.CampaignUC;
+import com.xyzch.client.core.customer.CustomerUC;
 import com.xyzch.client.core.model.Campaign;
 import com.xyzch.client.core.model.Customer;
 
@@ -25,6 +29,9 @@ import jakarta.validation.Valid;
 public class CampaignController {
     @Autowired
     CampaignUC campaignUC;
+
+    @Autowired
+    CustomerUC customerUC;
 
     private BoundedMapper boundedMapper = Mappers.getMapper(BoundedMapper.class);
 
@@ -46,9 +53,27 @@ public class CampaignController {
     @GetMapping(value = "/getAll")
     public ResponseEntity<ResponseCampaigns> getAllCampaign() {
         List<Campaign> compaignList = campaignUC.getAllCampaign();
+        List<Customer> customers = customerUC
+                .getAllCustomerByNames(compaignList.stream().map(Campaign::getName).collect(Collectors.toList()));
 
+        List<ResponseCampaign> responseList = new ArrayList<>();
+        for (Campaign campaign : compaignList) {
+            ResponseCampaign responseTemp = new ResponseCampaign();
+            Optional<Customer> customer = customers.stream().filter(c -> campaign.getName().equals(c.getName()))
+                    .findFirst();
+
+            responseTemp.setName(campaign.getName());
+            responseTemp.setGroupBenefit(campaign.getGroupBenefit());
+            responseTemp.setBenefit(campaign.getBenefit());
+
+            if (customer.isPresent()) {
+                responseTemp.setEmail(customer.get().getEmail());
+                responseTemp.setPhone(customer.get().getPhone());
+            }
+            responseList.add(responseTemp);
+        }
         ResponseCampaigns response = new ResponseCampaigns();
-        response.setCampaigns(boundedMapper.responseCampaingList(compaignList));
+        response.setCampaigns(responseList);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Custom-Header", "CustomHeaderValue");

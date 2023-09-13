@@ -12,4 +12,6 @@ public interface CustomerDataStore {
 
     public Customer getCustomerByName(String name);
 
+    public List<Customer> getAllCustomerByNames(List<String> names);
+
 }
