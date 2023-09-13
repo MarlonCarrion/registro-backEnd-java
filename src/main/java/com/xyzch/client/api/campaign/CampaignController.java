@@ -39,10 +39,10 @@ public class CampaignController {
     public ResponseEntity<ResponseSaveCampaign> save(@Valid @RequestBody RequestSaveCampaign requestRegisterCampaign) {
         Customer customer = boundedMapper.requestSaveCustomer(requestRegisterCampaign);
         Campaign campaign = boundedMapper.requestCampaign(requestRegisterCampaign);
-        campaignUC.saveCampaign(customer, campaign);
+        String message = campaignUC.saveCampaign(customer, campaign);
 
         ResponseSaveCampaign response = new ResponseSaveCampaign();
-        response.setMessage("Cliente guardado exitosamente!");
+        response.setMessage(message);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Custom-Header", "CustomHeaderValue");
         headers.add("Content-Type", "application/json");

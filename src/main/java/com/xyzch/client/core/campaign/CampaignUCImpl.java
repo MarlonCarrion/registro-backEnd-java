@@ -34,7 +34,8 @@ public class CampaignUCImpl implements CampaignUC {
     CustomerUC customerUC;
 
     @Override
-    public void saveCampaign(Customer customer, Campaign campaign) {
+    public String saveCampaign(Customer customer, Campaign campaign) {
+        String message = "Cliente registrado correctamente!";
         List<String> remainingBenefits = new ArrayList<>();
         List<Campaign> campaignsSaved = campaignDS.getAllCampaignByGroup(campaign.getGroupBenefit());
         // SAVE CUSTOMER IF NO EXIST
@@ -46,8 +47,7 @@ public class CampaignUCImpl implements CampaignUC {
         Optional<Campaign> campaignExist = campaignsSaved.stream().filter(c -> c.getName().equals(campaign.getName()))
                 .findFirst();
         if (campaignExist.isPresent()) {
-            // TODO: LANZAR MENSAJE INFORMATIVO
-            return;
+            return "Felicidades! El registro ya existe.";
         }
 
         switch (campaign.getGroupBenefit()) {
@@ -68,10 +68,9 @@ public class CampaignUCImpl implements CampaignUC {
             campaign.setBenefit(remainingBenefits.get(0));
             campaignDS.saveRegister(campaign);
         } else {
-            // TODO: LANZAR ERROR
-            System.out.println("Se termino los descuentos");
+            return "Mil disculpas! El sistema ya no tiene beneficios disponibles";
         }
-
+        return message;
     }
 
     @Override
